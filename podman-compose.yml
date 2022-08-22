@@ -1,0 +1,29 @@
+version: '3'
+services:
+  mariadb:
+    image: mariadb:10.8
+    restart: always
+    volumes:
+      - ./volumes/mariadb:/var/lib/mysql:Z,rw
+    environment:
+      MARIADB_DATABASE:       "moodle"
+      MARIADB_USER:           "moodle"
+      MARIADB_PASSWORD:       "moodle"
+      MARIADB_ROOT_PASSWORD:  "moodle"
+
+  php:
+    # this is the only piece we build
+    # it holds the moodle folder and our plugins
+    build: 
+      context: .
+      args:
+        MODE: ${MODE}
+    volumes:
+      - ./volumes/moodle:/moodle:z,rw # moodle goes here
+      - ./volumes/moodledata:/moodledata:z,rw
+    environment:
+      URL: ${URL}
+      MODE: ${MODE}
+
+  redis:
+    image: redis:7-alpine
