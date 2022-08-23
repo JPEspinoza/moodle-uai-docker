@@ -20,15 +20,13 @@ $CFG->dboptions = array(
 $CFG->dataroot  = '/moodledata';
 
 # read the URL from the config
-$CFG->wwwroot   = $_ENV['URL'];
+$CFG->wwwroot = $_ENV['URL'];
 
 # redis config
 $CFG->session_handler_class = '\core\session\redis';
 $CFG->session_redis_host = 'redis';
 $CFG->session_redis_port = 6379;
 $CFG->session_redis_database = 0;
-$CFG->session_redis_auth = '';
-$CFG->session_redis_prefix = '';
 $CFG->session_redis_acquire_lock_timeout = 120;
 $CFG->session_redis_lock_expire = 7200;
 $CFG->session_redis_lock_retry = 100;
@@ -38,9 +36,6 @@ $CFG->session_redis_compressor = 'zstd';
 # if development
 if($_ENV['MODE'] == "development") 
 {
-    # disable email if mode is development
-    $CFG->noemailever = true;
-
     # force debugging
     @error_reporting(E_ALL | E_STRICT);
     @ini_set('display_errors', '1');
@@ -56,6 +51,18 @@ $CFG->xsendfilealiases = array(
 
 # required to avoid moodle being confused by the different port between the url and nginx
 $CFG->reverseproxy = true;
+
+# setup paths
+$CFG->pathtogs = '/usr/bin/ghostscript';
+$CFG->pathtophp = '/usr/local/bin/php';
+$CFG->pathtodu = '/usr/bin/du';
+$CFG->aspellpath = '/usr/bin/aspell';
+$CFG->pathtodot = '/usr/bin/dot';
+$CFG->pathtopdftoppm = '/usr/bin/pdftoppm';
+$CFG->pathtopython = '/usr/bin/python3';
+# $CFG->pathtounoconv = ''; # too large
+ 
+##############################################
 
 require_once(__DIR__ . '/lib/setup.php'); // Do not edit
 

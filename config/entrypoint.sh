@@ -8,41 +8,68 @@
 # - notasuai
 # - uai (block)
 
-# install or upgrade
+if [[ ! -f version.php ]]
+then
+    echo "Installing moodle"
+    echo "This may take a while..."
+    git clone https://github.com/moodle/moodle.git .
+fi
 echo "Upgrading moodle..."
-echo "This may take a while..."
-echo "Don't worry if the cloning fails, this means that moodle is already installed"
-git clone https://github.com/moodle/moodle.git .
 git checkout MOODLE_400_STABLE
-git pull
+git pull --ff-only
 
-echo "Upgrading UAI block"
-git clone https://github.com/webcursosqa/uai.git blocks/uai
-git --git-dir blocks/uai/.git pull
+# install the plugins if not installed yet
+# check if the folder where the plugin goes has the version.php file
+# if the folder or the file don't exist, pull
+if [[ ! -f blocks/uai/version.php ]]
+then
+    echo "Installing uai block"
+    git clone https://github.com/webcursosqa/uai.git blocks/uai
+fi
 
-echo "Upgrading emarking..."
-git clone https://github.com/webcursosqa/emarking.git mod/emarking
-git --git-dir mod/emarking/.git checkout moodle39v2
-git --git-dir mod/emarking/.git pull
+if [[ ! -f mod/emarking/version.php ]]
+then
+    echo "Installing emarking"
+    git clone https://github.com/webcursosqa/emarking.git mod/emarking
+fi
 
-echo "Upgrading Sync"
-git clone https://github.com/webcursosqa/sync.git local/sync
-git --git-dir local/sync/.git checkout moodle39
-git --git-dir local/sync/.git pull
+if [[ ! -f local/sync/version.php ]]
+then
+    echo "Installing sync"
+    git clone https://github.com/webcursosqa/sync.git local/sync
+fi
 
-echo "Upgrading reservasalas"
-git clone https://github.com/webcursosqa/reservasalas.git local/reservasalas
-git --git-dir local/reservasalas/.git checkout moodle39
-git --git-dir local/reservasalas/.git pull
+if [[ ! -f local/reservasalas/version.php ]]
+then
+    echo "Installing reservasalas"
+    git clone https://github.com/webcursosqa/reservasalas.git local/reservasalas
+fi
 
-echo "Upgrading paperattendance"
-git clone https://github.com/webcursosqa/paperattendance.git local/paperattendance
-git --git-dir local/paperattendance/.git checkout moodle39
-git --git-dir local/paperattendance/.git pull
+if [[ ! -f local/paperattendance/version.php ]]
+then
+    echo "Installing paperattendance"
+    git clone https://github.com/webcursosqa/paperattendance.git local/paperattendance
+fi
 
 echo "Updating moodle config"
+# we wipe this every time just in case an update to the image is released
+# inside the config.php there are a bunch of variables as well
 rm config.php
 cp /config.php config.php
+
+echo "Updating php config"
+cp "$PHP_INI_DIR/php.ini-${MODE}" "$PHP_INI_DIR/php.ini"
+echo '
+max_input_vars = 5000
+memory_limit = ${MEMORY_LIMIT}
+post_max_size = ${MAX_UPLOAD_SIZE}
+upload_max_filesize = ${MAX_UPLOAD_SIZE}
+opcache.enable=1
+opcache.enable_cli=1
+opcache.jit_buffer_size=128M
+opcache.jit=1255
+variables_order = EGPCS' >> $PHP_INI_DIR/php.ini
+
 
 echo "Starting server..."
 

@@ -14,16 +14,29 @@ services:
   php:
     # this is the only piece we build
     # it holds the moodle folder and our plugins
-    build: 
-      context: .
-      args:
-        MODE: ${MODE}
+    build: .
     volumes:
       - ./volumes/moodle:/moodle:z,rw # moodle goes here
       - ./volumes/moodledata:/moodledata:z,rw
     environment:
-      URL: ${URL}
-      MODE: ${MODE}
+      URL: http://localhost:8080
+      MODE: development # production or development
+      MEMORY_LIMIT: 1G
+      MAX_UPLOAD_SIZE: 1G
+      MAX_EXECUTION_TIME: 60
 
+  # supporting pieces
   redis:
-    image: redis:7-alpine
+    image: redis:7
+  # node js in the future?
+
+  # nginx exposes the server
+  # it can be then reverse proxied further for SSL
+  nginx:
+    image: nginx:latest
+    ports:
+      - 8080:80
+    volumes:
+      - ./config/nginx.conf:/etc/nginx/nginx.conf:Z,ro
+      - ./volumes/moodle:/moodle:z,ro
+      - ./volumes/moodledata:/moodledata:z,ro
