@@ -22,6 +22,20 @@ $CFG->dataroot  = '/moodledata';
 # read the URL from the config
 $CFG->wwwroot = $_ENV['URL'];
 
+# if url specifies the port we enable reverse proxy
+# to check we delete the :// (from http://) and then check
+# if there are any more ':'
+if (strpos(str_replace("://", "", $_ENV['URL']), ':'))
+{
+    $CFG->reverseproxy = true;
+}
+
+# if url contains https we enable sslproxy
+if (strpos($_ENV['URL'], 'https')) 
+{
+    $CFG->sslproxy = true;
+}
+
 # redis config
 $CFG->session_handler_class = '\core\session\redis';
 $CFG->session_redis_host = 'redis';
@@ -48,9 +62,6 @@ $CFG->xsendfile = 'X-Accel-Redirect';
 $CFG->xsendfilealiases = array(
     '/dataroot/' => $CFG->dataroot
 );
-
-# required to avoid moodle being confused by the different port between the url and nginx
-$CFG->reverseproxy = true;
 
 # setup paths
 $CFG->pathtogs = '/usr/bin/ghostscript';

@@ -15,11 +15,16 @@ services:
     # this is the only piece we build
     # it holds the moodle folder and our plugins
     build: .
+    image: webcursos.uai.cl/php:8.0-r0
     volumes:
       - ./volumes/moodle:/moodle:z,rw # moodle goes here
       - ./volumes/moodledata:/moodledata:z,rw
     environment:
-      URL: http://localhost:8080
+      # the url used to access the server
+      # the port must be the same one as nginx (the first one only)
+      # if using port 80 (default) it must be omitted
+      # if using https port must be omitted and https must be specified in url
+      URL: http://localhost:8080 
       MODE: development # production or development
       MEMORY_LIMIT: 1G
       MAX_UPLOAD_SIZE: 1G
@@ -35,7 +40,7 @@ services:
   nginx:
     image: nginx:latest
     ports:
-      - 8080:80
+      - 8080:80 # dont touch the second number, only the first one
     volumes:
       - ./config/nginx.conf:/etc/nginx/nginx.conf:Z,ro
       - ./volumes/moodle:/moodle:z,ro
