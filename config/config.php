@@ -31,7 +31,7 @@ if (strpos(str_replace("://", "", $_ENV['URL']), ':'))
 }
 
 # if url contains https we enable sslproxy
-if (strpos($_ENV['URL'], 'https')) 
+if (substr($_ENV['URL'], 0, 8) == "https://") 
 {
     $CFG->sslproxy = true;
 }

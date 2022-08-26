@@ -44,6 +44,9 @@ or
 ## Notice
 On first run it will take a while as moodle is downloaded. The server will be ready once you see the `[php] clone complete` message.
 
+## Notice
+When running on docker php will run as root and you won't be able to modify moodle files without root access. If you wish to use this image for development prefer podman, under which php will run as your user.
+
 ## TODO
 - private repo support (maybe a folder to leave your private key into?)
 - RemUI support (a folder to leave the relevant files)

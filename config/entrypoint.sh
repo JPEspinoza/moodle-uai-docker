@@ -58,7 +58,10 @@ rm config.php
 cp /config.php config.php
 
 echo "Updating php config"
+# copy the development or production php configuration 
 cp "$PHP_INI_DIR/php.ini-${MODE}" "$PHP_INI_DIR/php.ini"
+
+# add required variables to configuration
 echo '
 max_input_vars = 5000
 memory_limit = ${MEMORY_LIMIT}
@@ -69,7 +72,6 @@ opcache.enable_cli=1
 opcache.jit_buffer_size=128M
 opcache.jit=1255
 variables_order = EGPCS' >> $PHP_INI_DIR/php.ini
-
 
 echo "Starting server..."
 

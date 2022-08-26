@@ -21,6 +21,7 @@ services:
       - ./volumes/moodledata:/moodledata:z,rw
     environment:
       # the url used to access the server
+      # http or https must be specified
       # the port must be the same one as nginx (the first one only)
       # if using port 80 (default) it must be omitted
       # if using https port must be omitted and https must be specified in url
