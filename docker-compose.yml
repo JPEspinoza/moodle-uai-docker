@@ -62,7 +62,7 @@ services:
   nginx:
     image: nginx:latest
     ports:
-      - 8080:80 # dont touch the second number, only the first one
+      - 80:80 # dont touch the second number, only the first one
     volumes:
       - ./config/nginx.conf:/etc/nginx/nginx.conf:Z,ro
       - ./volumes/moodle:/moodle:z,ro
