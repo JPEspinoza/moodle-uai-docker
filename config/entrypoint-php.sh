@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 # this entrypoint clones moodle, switches to the branch MOODLE_400_STABLE and downloads the following plugins
 # - paperattendance
 # - emarking
@@ -75,5 +75,20 @@ variables_order = EGPCS' >> $PHP_INI_DIR/php.ini
 
 echo "Starting server..."
 
-# run command that will keep the server alive from now on
-exec php-fpm --allow-to-run-as-root
+# run with the desired user id
+# used to run on uid 0 for podman and the user uid on docker
+if [[ $UID -eq 0 ]]
+then
+    # podman config, run as root
+    # replace www-data user with root
+    sed -i 's/www-data/root/' /usr/local/etc/php-fpm.d/www.conf
+    exec php-fpm --allow-to-run-as-root
+else
+    # docker config, run as phpuser with specified uid
+    # replace www-data with phpuser
+    sed -i 's/www-data/phpuser/' /usr/local/etc/php-fpm.d/www.conf
+    # add phpuser
+    groupadd -g $UID phpuser
+    useradd phpuser -u $UID -g $UID -m -s /bin/bash
+    exec php-fpm
+fi

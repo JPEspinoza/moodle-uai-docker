@@ -15,7 +15,7 @@ services:
     # this is the only piece we build
     # it holds the moodle folder and our plugins
     build: .
-    image: webcursos.uai.cl/php:8.0-r0
+    image: webcursos.uai.cl/php:8.0-r1
     volumes:
       - ./volumes/moodle:/moodle:z,rw # moodle goes here
       - ./volumes/moodledata:/moodledata:z,rw
@@ -30,6 +30,27 @@ services:
       MEMORY_LIMIT: 1G
       MAX_UPLOAD_SIZE: 1G
       MAX_EXECUTION_TIME: 60
+      # if you want to be able to modify the files on the volumes
+      # leave on 0 on podman, set to your uid on docker (probably 1000)
+      # if you prefer higher security set to an arbitrarily large number
+      UID: 0 
+    entrypoint: /entrypoint-php.sh
+
+  cron:
+    # this uses a clone of the php container to run the cron
+    image: webcursos.uai.cl/php:8.0-r1
+    volumes:
+      - ./volumes/moodle:/moodle:z,rw # moodle goes here
+      - ./volumes/moodledata:/moodledata:z,rw
+    environment:
+      # the environment must be the same as the php container
+      URL: http://localhost:8080 
+      MODE: development
+      MEMORY_LIMIT: 1G
+      MAX_UPLOAD_SIZE: 1G
+      MAX_EXECUTION_TIME: 600
+      UID: 0
+    entrypoint: /entrypoint-cron.sh
 
   # supporting pieces
   redis:

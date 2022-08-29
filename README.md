@@ -24,6 +24,7 @@ The user is supposed to create the admin user at first login and create the cate
     - The `moodle` folder contains the Moodle install. It can be modified if so desired.
     - The `moodledata` folder contains the Moodle `dataroot` files. You are not supposed to modify these.
 - The `config` folder contains a few configuration files that are setup through environment variables in docker-compose.yml. You are not supposed to modify these, and doing so requires rebuilding the php image.
+- The `plugins` folder contains a skeleton of moodle's folder structure. You may put plugins there to be automatically installed
 
 ## Requirements
 - `podman`

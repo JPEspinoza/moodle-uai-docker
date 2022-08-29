@@ -4,7 +4,8 @@ FROM php:8.0-fpm
 # the entrypoint is executed at /
 # config is later copied again into the moodle volume
 # config has tweakable variables
-COPY ./config/entrypoint.sh /entrypoint.sh
+COPY ./config/entrypoint-php.sh /entrypoint-php.sh
+COPY ./config/entrypoint-cron.sh /entrypoint-cron.sh
 COPY ./config/config.php /config.php
 WORKDIR /moodle
 
@@ -20,13 +21,5 @@ RUN apt-get update -y && \
     chmod +x /usr/local/bin/install-php-extensions && \ 
     MAKEFLAGS="-j$(nproc)" install-php-extensions redis igbinary zstd opcache mysqli zip gd intl soap ldap exif xmlrpc && \
     sed -i 's/www-data/root/' /usr/local/etc/php-fpm.d/www.conf && \
-    chmod +x /entrypoint.sh
-
-# the entry script does the following:
-# upgrades moodle or installs if not installed
-# upgrades plugins or installs if not installed
-# replaces the config.php with the new one
-ENTRYPOINT [ "bash", "/entrypoint.sh" ]
-
-# php-fpm runs on port 9000
-EXPOSE 9000
+    chmod +x /entrypoint-cron.sh && \
+    chmod +x /entrypoint-php.sh
