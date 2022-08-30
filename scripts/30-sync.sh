@@ -1,7 +1,7 @@
 #!/bin/bash
 # this script runs the uai sync
 
-if [[ command -v podman ]]
+if [[ $(command -v podman) ]]
 then
     podman container exec moodle_php_1 php /moodle/local/sync/cli/syncomega.php
 else 
