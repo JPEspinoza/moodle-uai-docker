@@ -14,9 +14,19 @@ This pod uses nginx, php-fpm 8.0, and mariadb. It's designed to be used both in 
 - notasuai
 
 ## Automatic Setup
-This pod automatically installs Moodle and fills the configuration for the installed plugins
+This pod automatically installs Moodle and the UAI (public) plugins
 
 The user is supposed to create the admin user at first login and create the category `Pregrado` at id `406`
+
+## Scripts
+In the `scripts` folder you can find some helper scripts
+
+- `10-cron.sh`: runs the cron
+- `20-ldap.sh`: syncs the users from ldap (after configuring ldap authentication)
+- `30-sync.sh`: syncs the sync plugin (after creating a synchronization)
+- `40-enrol.sh`: creates the courses synced by `sync` and enrols the users into the courses (after configuring database enrol)
+
+For a successful setup, the required configuration must be filled into the settings and the scripts must be run in order
 
 ## File structure
 - The `volumes` folder contains dynamic data that is filled on runtime.
@@ -24,7 +34,6 @@ The user is supposed to create the admin user at first login and create the cate
     - The `moodle` folder contains the Moodle install. It can be modified if so desired.
     - The `moodledata` folder contains the Moodle `dataroot` files. You are not supposed to modify these.
 - The `config` folder contains a few configuration files that are setup through environment variables in docker-compose.yml. You are not supposed to modify these, and doing so requires rebuilding the php image.
-- [TODO] The `plugins` folder contains a skeleton of moodle's folder structure. You may put plugins there to be automatically moved into the corresponding moodle folder
 
 ## Requirements
 - `podman`

@@ -19,25 +19,24 @@ services:
     volumes:
       - ./volumes/moodle:/moodle:z,rw # moodle goes here
       - ./volumes/moodledata:/moodledata:z,rw
+
+    # leave on 0:0 on podman
+    # change to your UID on docker 
+    # probably 1000:1000
+    user: 1000:1000
+    entrypoint: /entrypoint-php.sh
     environment:
       # the url used to access the server
       # http or https must be specified
       # the port must be the same one as nginx (the first one only)
       # if using port 80 (default) it must be omitted
       # if using https port must be omitted and https must be specified in url
-      URL: http://localhost:8080 
+      URL: http://vmlin77
       MODE: development # production or development
       MEMORY_LIMIT: 1G
       MAX_UPLOAD_SIZE: 1G
-      MAX_EXECUTION_TIME: 60
-
-      # if you want to be able to modify the files on the volumes
-      # leave on 0 on podman, set to your uid on docker (probably 1000)
-      # if you prefer higher security set to an arbitrarily large number
-      UID: 1000
-
-    entrypoint: /entrypoint-php.sh
-
+      MAX_EXECUTION_TIME: 600
+    
   cron:
     # this uses a clone of the php container to run the cron
     image: webcursos.uai.cl/php:8.0-r1
@@ -46,9 +45,7 @@ services:
       - ./volumes/moodledata:/moodledata:z,rw
     environment:
       # the environment must have the same variables
-      # the uid can be ignored, the container always runs as 
-      # www-data
-      URL: http://localhost:8080 
+      URL: http://vmlin77
       MODE: development
       MEMORY_LIMIT: 1G
       MAX_UPLOAD_SIZE: 1G
@@ -58,6 +55,7 @@ services:
   # supporting pieces
   redis:
     image: redis:7
+
   # node js in the future?
 
   # nginx exposes the server
@@ -65,7 +63,7 @@ services:
   nginx:
     image: nginx:latest
     ports:
-      - 8080:80 # dont touch the second number, only the first one
+      - 80:80 # dont touch the second number, only the first one
     volumes:
       - ./config/nginx.conf:/etc/nginx/nginx.conf:Z,ro
       - ./volumes/moodle:/moodle:z,ro
