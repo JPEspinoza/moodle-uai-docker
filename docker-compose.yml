@@ -11,11 +11,19 @@ services:
       MARIADB_PASSWORD:       "moodle"
       MARIADB_ROOT_PASSWORD:  "moodle"
 
+  redis:
+    image: redis:7
+    restart: always
+
   php:
     # this is the only piece we build
     # it holds the moodle folder and our plugins
     build: .
     image: webcursos.uai.cl/php:8.0-r1
+    restart: always
+    depends_on:
+      - mariadb
+      - redis
     volumes:
       - ./volumes/moodle:/moodle:z,rw # moodle goes here
       - ./volumes/moodledata:/moodledata:z,rw
@@ -33,19 +41,25 @@ services:
       # the user id to run php under
       UID: 1000
 
-  # supporting pieces
-  redis:
-    image: redis:7
-
-  # node js in the future?
-
   # nginx exposes the server
   # it can be then reverse proxied further for SSL
   nginx:
     image: nginx:latest
+    restart: always
+    depends_on:
+      - php
     ports:
       - 80:80 # dont touch the second number, only the first one
     volumes:
       - ./config/nginx.conf:/etc/nginx/nginx.conf:Z,ro
       - ./volumes/moodle:/moodle:z,ro
       - ./volumes/moodledata:/moodledata:z,ro
+
+  webcron:
+    image: cw1900/docker-webcron
+    restart: always
+    depends_on:
+      - nginx
+    environment:
+      - INTERVAL_TIME=60
+      - URL=http://nginx:80/admin/cron.php?password=mBWPMCesiMwWFYu36Fa9zoWDRi8rDwWa3YKdnao6mCozZFUwLiNthVk54Fy7Ssu

@@ -70,6 +70,9 @@ $CFG->pathtodot = '/usr/bin/dot';
 $CFG->pathtopdftoppm = '/usr/bin/pdftoppm';
 $CFG->pathtopython = '/usr/bin/python3';
 # $CFG->pathtounoconv = ''; # too large
+
+$CFG->cronclionly = false;  
+$CFG->cronremotepassword = 'mBWPMCesiMwWFYu36Fa9zoWDRi8rDwWa3YKdnao6mCozZFUwLiNthVk54Fy7Ssu';  
  
 ##############################################
 
