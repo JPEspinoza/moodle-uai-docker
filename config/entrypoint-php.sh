@@ -25,11 +25,6 @@ opcache.jit_buffer_size=128M
 opcache.jit=1255
 variables_order = EGPCS' >> $PHP_INI_DIR/php.ini
 
-# change owner of folder to phpuser
-echo "Changing owner of moodle and moodledata volumes..."
-chown $EUID:$EUID /moodle -R
-chown $EUID:$EUID /moodledata -R
-
 echo "Setting up moodle environment..."
 
 if [[ ! -f version.php ]]
@@ -81,6 +76,23 @@ echo "Updating moodle config..."
 rm config.php
 cp /config.php config.php
 
-echo "Starting server..."
+echo "Configuring user..."
+if [[ $UID -eq 0 ]]
+then
+    # if $UID is 0 we modify www.conf to run as root
+    sed -i 's/www-data/root/' /usr/local/etc/php-fpm.d/www.conf
+else
+    # if $UID is not 0 we create a phpuser user and 
+    # modify www.conf to run as phpuser
+    sed -i 's/www-data/phpuser/' /usr/local/etc/php-fpm.d/www.conf
+    groupadd -g $UID phpuser
+    useradd phpuser -u $UID -g $UID -m -s /bin/bash
+fi
+
+echo "Changing owner of moodle and moodledata..."
+chown $UID:$UID /moodle -R
+chown $UID:$UID /moodledata -R
+
 # replace bash with php-fpm
+echo "Starting server..."
 exec php-fpm --allow-to-run-as-root

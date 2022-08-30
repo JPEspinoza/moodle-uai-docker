@@ -18,7 +18,6 @@ WORKDIR /moodle
 # make entry script executable
 ADD https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions /usr/local/bin/
 RUN true && \
-    sed -i 's/www-data/root/' /usr/local/etc/php-fpm.d/www.conf && \
     chmod +x /entrypoint-php.sh && \
     chmod +x /entrypoint-cron.sh && \
     apt-get update && \
