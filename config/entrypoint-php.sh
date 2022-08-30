@@ -8,6 +8,69 @@
 # - notasuai
 # - uai (block)
 
+if [[ $EUID -eq 0 ]]
+then
+    # if we are root, configure PHP
+    echo "Configuring PHP modules..."
+
+    # copy the development or production php configuration 
+    cp "$PHP_INI_DIR/php.ini-${MODE}" "$PHP_INI_DIR/php.ini"
+
+    # add required variables to configuration
+    echo '
+    max_input_vars = 5000
+    memory_limit = ${MEMORY_LIMIT}
+    post_max_size = ${MAX_UPLOAD_SIZE}
+    upload_max_filesize = ${MAX_UPLOAD_SIZE}
+    opcache.enable=1
+    opcache.enable_cli=1
+    opcache.jit_buffer_size=128M
+    opcache.jit=1255
+    variables_order = EGPCS' >> $PHP_INI_DIR/php.ini
+
+    # change owner of folder to phpuser
+    echo "Changing owner of moodle and moodledata volumes..."
+    chown $UID:$UID /moodle -R
+    chown $UID:$UID /moodledata -R
+fi
+
+if [[ $UID -ne 0 ]] && [[ $EUID -eq 0 ]]
+then
+    # if the configured UID is not root
+    # and we are currently root
+    # create php user
+    # after that this script will re-execute with the new user
+    echo "Switching user to $UID..."
+
+    # add phpuser
+    echo "Creating user..."
+    groupadd -g $UID phpuser
+    useradd phpuser -u $UID -g $UID -m -s /bin/bash
+
+    # change php config to use phpuser
+    echo "Setting php to run as specified user..."
+    sed -i 's/www-data/phpuser/' /usr/local/etc/php-fpm.d/www.conf
+
+    # re execute the script with the correct user
+    # this script execution will stop since exec replaces the running process with a new one
+    echo "Restarting as specified user..."
+    exec su phpuser /entrypoint-php.sh
+fi
+
+if [[ $UID -eq 0 ]] 
+then
+    # if UID is 0 we setup to run as root
+
+    # change php config to use root
+    echo "Setting up php to run as root"
+    sed -i 's/www-data/root/' /usr/local/etc/php-fpm.d/www.conf
+fi
+
+CURRENT_USER=$(whoami)
+echo "User setup successful, currently running as: $CURRENT_USER"
+
+echo "Setting up moodle environment..."
+
 if [[ ! -f version.php ]]
 then
     echo "Installing moodle"
@@ -51,44 +114,12 @@ then
     git clone https://github.com/webcursosqa/paperattendance.git local/paperattendance
 fi
 
-echo "Updating moodle config"
+echo "Updating moodle config..."
 # we wipe this every time just in case an update to the image is released
 # inside the config.php there are a bunch of variables as well
 rm config.php
 cp /config.php config.php
 
-echo "Updating php config"
-# copy the development or production php configuration 
-cp "$PHP_INI_DIR/php.ini-${MODE}" "$PHP_INI_DIR/php.ini"
-
-# add required variables to configuration
-echo '
-max_input_vars = 5000
-memory_limit = ${MEMORY_LIMIT}
-post_max_size = ${MAX_UPLOAD_SIZE}
-upload_max_filesize = ${MAX_UPLOAD_SIZE}
-opcache.enable=1
-opcache.enable_cli=1
-opcache.jit_buffer_size=128M
-opcache.jit=1255
-variables_order = EGPCS' >> $PHP_INI_DIR/php.ini
-
 echo "Starting server..."
-
-# run with the desired user id
-# used to run on uid 0 for podman and the user uid on docker
-if [[ $UID -eq 0 ]]
-then
-    # podman config, run as root
-    # replace www-data user with root
-    sed -i 's/www-data/root/' /usr/local/etc/php-fpm.d/www.conf
-    exec php-fpm --allow-to-run-as-root
-else
-    # docker config, run as phpuser with specified uid
-    # replace www-data with phpuser
-    sed -i 's/www-data/phpuser/' /usr/local/etc/php-fpm.d/www.conf
-    # add phpuser
-    groupadd -g $UID phpuser
-    useradd phpuser -u $UID -g $UID -m -s /bin/bash
-    exec php-fpm
-fi
+# replace bash with php-fpm
+exec php-fpm --allow-to-run-as-root

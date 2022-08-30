@@ -24,7 +24,7 @@ The user is supposed to create the admin user at first login and create the cate
     - The `moodle` folder contains the Moodle install. It can be modified if so desired.
     - The `moodledata` folder contains the Moodle `dataroot` files. You are not supposed to modify these.
 - The `config` folder contains a few configuration files that are setup through environment variables in docker-compose.yml. You are not supposed to modify these, and doing so requires rebuilding the php image.
-- The `plugins` folder contains a skeleton of moodle's folder structure. You may put plugins there to be automatically installed
+- [TODO] The `plugins` folder contains a skeleton of moodle's folder structure. You may put plugins there to be automatically moved into the corresponding moodle folder
 
 ## Requirements
 - `podman`
@@ -38,9 +38,14 @@ or
 - CentOS 7: using docker!
     - https://docs.docker.com/engine/install/centos/
 
-## How to use
+## How to use: Podman
 1. modify `docker-compose.yml` to liking
 2. run `podman-compose up`
+
+## How to use: Docker
+1. modify `docker-compose.yml` to liking
+2. run `docker compose build`
+3. run `docker compose up`
 
 ## Notice
 On first run it will take a while as moodle is downloaded. The server will be ready once you see the `[php] clone complete` message.
@@ -50,7 +55,6 @@ When running on docker php will run as root and you won't be able to modify mood
 
 ## TODO
 - private repo support (maybe a folder to leave your private key into?)
-- RemUI support (a folder to leave the relevant files)
 - Auto configuration
     - database enrol
     - ldap
