@@ -31,23 +31,7 @@ services:
       MAX_UPLOAD_SIZE: 1G
       MAX_EXECUTION_TIME: 600
       # the user id to run php under
-      UID: 0
-    entrypoint: /entrypoint-php.sh
-    
-  cron:
-    # this uses a clone of the php container to run the cron
-    image: webcursos.uai.cl/php:8.0-r1
-    volumes:
-      - ./volumes/moodle:/moodle:z,rw # moodle goes here
-      - ./volumes/moodledata:/moodledata:z,rw
-    environment:
-      # the environment must have the same variables
-      URL: http://vmlin77
-      MODE: development
-      MEMORY_LIMIT: 1G
-      MAX_UPLOAD_SIZE: 1G
-      MAX_EXECUTION_TIME: 600
-    entrypoint: /entrypoint-cron.sh
+      UID: 1000
 
   # supporting pieces
   redis:

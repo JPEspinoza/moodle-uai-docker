@@ -44,8 +44,6 @@ $CFG->session_redis_database = 0;
 $CFG->session_redis_acquire_lock_timeout = 120;
 $CFG->session_redis_lock_expire = 7200;
 $CFG->session_redis_lock_retry = 100;
-$CFG->session_redis_serializer_use_igbinary = true;
-$CFG->session_redis_compressor = 'zstd';
 
 # if development
 if($_ENV['MODE'] == "development") 
