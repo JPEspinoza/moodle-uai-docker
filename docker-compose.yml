@@ -19,12 +19,6 @@ services:
     volumes:
       - ./volumes/moodle:/moodle:z,rw # moodle goes here
       - ./volumes/moodledata:/moodledata:z,rw
-
-    # leave on 0:0 on podman
-    # change to your UID on docker 
-    # probably 1000:1000
-    user: 1000:1000
-    entrypoint: /entrypoint-php.sh
     environment:
       # the url used to access the server
       # http or https must be specified
@@ -38,6 +32,7 @@ services:
       MAX_EXECUTION_TIME: 600
       # the user id to run php under
       UID: 0
+    entrypoint: /entrypoint-php.sh
     
   cron:
     # this uses a clone of the php container to run the cron
