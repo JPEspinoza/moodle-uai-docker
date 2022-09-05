@@ -56,6 +56,11 @@ or
 2. run `docker compose build`
 3. run `docker compose up`
 
+## How to modify variables
+1. modify the desired variable in `docker-compose.yml`
+2. run `docker compose down` to destroy the containers
+3. run `docker compose up` to rebuild the containers with the new variables
+
 ## Notice
 On first run it will take a while as moodle is downloaded. The server will be ready once you see the `[php] clone complete` message.
 

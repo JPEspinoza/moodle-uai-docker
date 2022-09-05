@@ -34,7 +34,7 @@ services:
       # if using port 80 (default) it must be omitted
       # if using https port must be omitted and https must be specified in url
       URL: http://vmlin77
-      MODE: development # production or development
+      MODE: production # production or development
       MEMORY_LIMIT: 1G
       MAX_UPLOAD_SIZE: 1G
       MAX_EXECUTION_TIME: 600
