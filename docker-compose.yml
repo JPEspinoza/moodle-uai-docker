@@ -1,7 +1,7 @@
 version: '3'
 services:
   mariadb:
-    image: mariadb:10.8
+    image: docker.io/library/mariadb:10.8
     restart: always
     volumes:
       - ./volumes/mariadb:/var/lib/mysql:Z,rw
@@ -12,14 +12,14 @@ services:
       MARIADB_ROOT_PASSWORD:  "moodle"
 
   redis:
-    image: redis:7
+    image: docker.io/library/redis:7
     restart: always
 
   php:
     # this is the only piece we build
     # it holds the moodle folder and our plugins
     build: .
-    image: webcursos.uai.cl/php:8.0-r1
+    image: webcursos.uai.cl/php:8.0-r2
     restart: always
     depends_on:
       - mariadb
@@ -30,7 +30,8 @@ services:
     environment:
       # the url used to access the server
       # http or https must be specified
-      # the port must be the same one as nginx (the first one only)
+      # trailing / must be omitted
+      # the port must be the same one as nginx
       # if using port 80 (default) it must be omitted
       # if using https port must be omitted and https must be specified in url
       URL: http://vmlin77
@@ -44,22 +45,26 @@ services:
   # nginx exposes the server
   # it can be then reverse proxied further for SSL
   nginx:
-    image: nginx:latest
+    image: docker.io/library/nginx:1.23
     restart: always
     depends_on:
       - php
     ports:
-      - 80:80 # dont touch the second number, only the first one
+      # the port to expose the server on
+      # change only first number (external port)
+      - 80:80 
     volumes:
-      - ./config/nginx.conf:/etc/nginx/nginx.conf:Z,ro
-      - ./volumes/moodle:/moodle:z,ro
-      - ./volumes/moodledata:/moodledata:z,ro
+      - ./config/nginx.conf:/etc/nginx/conf.d/default.conf:Z,ro
+      - ./volumes/moodle:/moodle:z,rw
+      - ./volumes/moodledata:/moodledata:z,rw
 
   webcron:
-    image: cw1900/docker-webcron
+    image: docker.io/cw1900/docker-webcron:latest
     restart: always
     depends_on:
       - nginx
     environment:
       - INTERVAL_TIME=60
+      # the url goes to nginx:80, this is then redirected to the actual url but its fine since this webcron can
+      # handle it perfectly fine
       - URL=http://nginx:80/admin/cron.php?password=mBWPMCesiMwWFYu36Fa9zoWDRi8rDwWa3YKdnao6mCozZFUwLiNthVk54Fy7Ssu
