@@ -3,6 +3,8 @@ services:
   mariadb:
     image: docker.io/library/mariadb:10.8
     restart: always
+    ports:
+      - 3306:3306
     volumes:
       - ./volumes/mariadb:/var/lib/mysql:Z,rw
     environment:
@@ -19,7 +21,7 @@ services:
     # this is the only piece we build
     # it holds the moodle folder and our plugins
     build: .
-    image: webcursos.uai.cl/php:8.0-r2
+    image: webcursos.uai.cl/php:8.0-r3
     restart: always
     depends_on:
       - mariadb
@@ -27,14 +29,15 @@ services:
     volumes:
       - ./volumes/moodle:/moodle:z,rw # moodle goes here
       - ./volumes/moodledata:/moodledata:z,rw
+      - ./config/config.php:/moodle/config.php:Z,ro
     environment:
       # the url used to access the server
       # http or https must be specified
       # trailing / must be omitted
       # the port must be the same one as nginx
       # if using port 80 (default) it must be omitted
-      # if using https port must be omitted and https must be specified in url
-      URL: http://vmlin77
+      # if using https: port must be omitted and https must be specified in url
+      URL: http://webcursos-d.uai.cl
       MODE: production # production or development
       MEMORY_LIMIT: 1G
       MAX_UPLOAD_SIZE: 1G

@@ -70,12 +70,6 @@ then
     git clone https://github.com/webcursosqa/paperattendance.git local/paperattendance
 fi
 
-echo "Updating moodle config..."
-# we wipe this every time just in case an update to the image is released
-# inside the config.php there are a bunch of variables as well
-rm config.php
-cp /config.php config.php
-
 echo "Configuring user..."
 if [[ $UID -eq 0 ]]
 then

@@ -5,7 +5,6 @@ FROM php:8.0-fpm
 # config is later copied again into the moodle volume
 # config has tweakable variables
 COPY ./config/entrypoint.sh /entrypoint.sh
-COPY ./config/config.php /config.php
 
 WORKDIR /moodle
 

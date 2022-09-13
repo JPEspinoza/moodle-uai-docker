@@ -73,6 +73,9 @@ $CFG->pathtopython = '/usr/bin/python3';
 
 $CFG->cronclionly = false;  
 $CFG->cronremotepassword = 'mBWPMCesiMwWFYu36Fa9zoWDRi8rDwWa3YKdnao6mCozZFUwLiNthVk54Fy7Ssu';  
+
+# config for blocks
+$CFG->defaultblocks_override = 'uai,navigation,settings';
  
 ##############################################
 
