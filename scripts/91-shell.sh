@@ -3,7 +3,7 @@
 
 if [[ $(command -v podman) ]]
 then
-    podman container exec moodle_php_1 bash
+    podman container exec -it moodle_php_1 bash
 else 
-    docker container exec docker-uai-moodle-php-1 bash
+    docker container exec -it docker-uai-moodle-php-1 bash
 fi
