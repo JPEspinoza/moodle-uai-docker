@@ -3,7 +3,7 @@
 
 if [[ $(command -v podman) ]]
 then
-    podman container logs --follow --since 1h moodle-uai-docker_php_1 
+    podman container logs --follow moodle-uai-docker_webcron_1 
 else 
-    docker container logs --follow --since 1h moodle-uai-docker-php-1 
+    docker container logs --since 1h --follow  moodle-uai-docker-webcron-1
 fi
