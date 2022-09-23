@@ -37,13 +37,13 @@ services:
       # the port must be the same one as nginx
       # if using port 80 (default) it must be omitted
       # if using https: port must be omitted and https must be specified in url
-      URL: http://localhost
-      MODE: development # production or development
+      URL: http://webcursos-d.uai.cl
+      MODE: production # production or development
       MEMORY_LIMIT: 1G
       MAX_UPLOAD_SIZE: 1G
       MAX_EXECUTION_TIME: 600
       # the user id to run php under
-      UID: 0
+      UID: 1000
 
   # nginx exposes the server
   # it can be then reverse proxied further for SSL
