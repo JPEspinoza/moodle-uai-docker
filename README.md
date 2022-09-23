@@ -42,18 +42,18 @@ or
 
 ## Tested on
 - Fedora 36
+- Fedora 37
 - CentOS 7: using docker!
     - https://docs.docker.com/engine/install/centos/
+- CentOS 9: using docker and podman
 
 ## How to use
-1. modify `docker-compose.yml` to liking
-2. modify `config/config.php` to liking, prefer using `docker-compose.yml` if possible.
-3. run `podman-compose up` or `docker compose up`
+1. modify `.env` to liking
+2. run `podman-compose up` or `docker compose up`
 
 ## How to modify variables
-1. modify the desired variable in `docker-compose.yml`
-2. run `podman-compose down` to destroy the containers
-3. run `podman-compose up` to rebuild the containers with the new variables
+1. modify the desired variables in `.env`
+2. run `podman-compose up --force-recreate` to rebuild the containers with the new variables
 
 ## Notice
 On first run it will take a while as moodle is downloaded. The server will be ready once you see the `[php] clone complete` message.

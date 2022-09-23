@@ -1,10 +1,9 @@
-version: '3'
+version: 3
 services:
   mariadb:
     image: docker.io/library/mariadb:10.8
     restart: always
-    ports:
-      - 3306:3306
+    network_mode: host
     volumes:
       - ./volumes/mariadb:/var/lib/mysql:Z,rw
     environment:
@@ -16,6 +15,7 @@ services:
   redis:
     image: docker.io/library/redis:7
     restart: always
+    network_mode: host
 
   php:
     # this is the only piece we build
@@ -23,6 +23,7 @@ services:
     build: .
     image: webcursos.uai.cl/php:8.0-r4
     restart: always
+    network_mode: host
     depends_on:
       - mariadb
       - redis
@@ -31,43 +32,38 @@ services:
       - ./volumes/moodledata:/moodledata:z,rw
       - ./config/config.php:/moodle/config.php:Z,ro
     environment:
-      # the url used to access the server
-      # http or https must be specified
-      # trailing / must be omitted
-      # the port must be the same one as nginx
-      # if using port 80 (default) it must be omitted
-      # if using https: port must be omitted and https must be specified in url
-      URL: http://webcursos-d.uai.cl
-      MODE: production # production or development
-      MEMORY_LIMIT: 1G
-      MAX_UPLOAD_SIZE: 1G
-      MAX_EXECUTION_TIME: 600
-      # the user id to run php under
-      UID: 1000
+      URL: ${URL}
+      PORT: ${PORT}
+      MODE: ${MODE} 
+      MEMORY_LIMIT: ${MEMORY_LIMIT}
+      MAX_UPLOAD_SIZE: ${MAX_UPLOAD_SIZE}
+      MAX_EXECUTION_TIME: ${MAX_EXECUTION_TIME}
+      CRON_PASSWORD: ${CRON_PASSWORD}
+      UID: ${UID}
 
-  # nginx exposes the server
-  # it can be then reverse proxied further for SSL
   nginx:
     image: docker.io/library/nginx:1.23
     restart: always
+    network_mode: host
     depends_on:
       - php
-    ports:
-      # the port to expose the server on
-      # change only first number (external port)
-      - 80:80 
     volumes:
-      - ./config/nginx.conf:/etc/nginx/conf.d/default.conf:Z,ro
+      - ./config/nginx.conf:/etc/nginx/templates/default.conf.template:Z,ro
       - ./volumes/moodle:/moodle:z,rw
       - ./volumes/moodledata:/moodledata:z,rw
+    environment:
+      URL: ${URL}
+      PORT: ${PORT}
+      MAX_UPLOAD_SIZE: ${MAX_UPLOAD_SIZE}
+      MAX_EXECUTION_TIME: ${MAX_EXECUTION_TIME}
 
   webcron:
     image: docker.io/cw1900/docker-webcron:latest
     restart: always
+    network_mode: host
     depends_on:
       - nginx
     environment:
       - INTERVAL_TIME=60
-      # the url goes to nginx:80, this is then redirected to the actual url but its fine since this webcron can
-      # handle it perfectly fine
-      - URL=http://nginx:80/admin/cron.php?password=mBWPMCesiMwWFYu36Fa9zoWDRi8rDwWa3YKdnao6mCozZFUwLiNthVk54Fy7Ssu
+      # we can be lenient with the URL here since webcron can handle redirects just fine
+      - URL=http://${URL}:${PORT}/admin/cron.php?password=${CRON_PASSWORD}

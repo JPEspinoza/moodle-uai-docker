@@ -1,5 +1,5 @@
 volumes/*
 !volumes/.gitkeep
-.idea
-env
-.env
+.idea/
+env/
+.env/

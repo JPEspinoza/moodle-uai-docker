@@ -7,7 +7,7 @@ $CFG = new stdClass();
 # db config
 $CFG->dbtype    = 'mariadb';
 $CFG->dblibrary = 'native';
-$CFG->dbhost    = 'mariadb';
+$CFG->dbhost    = 'localhost:3306';
 $CFG->dbname    = 'moodle';
 $CFG->dbuser    = 'moodle';
 $CFG->dbpass    = 'moodle';
@@ -19,26 +19,28 @@ $CFG->dboptions = array(
 
 $CFG->dataroot  = '/moodledata';
 
-# read the URL from the config
-$CFG->wwwroot = $_ENV['URL'];
-
-# if url specifies the port we enable reverse proxy
-# to check we delete the :// (from http://) and then check
-# if there are any more ':'
-if (strpos(str_replace("://", "", $_ENV['URL']), ':'))
+if ($_ENV['PORT'] == '80')
 {
-    $CFG->reverseproxy = true;
-}
-
-# if url contains https we enable sslproxy
-if (substr($_ENV['URL'], 0, 8) == "https://") 
+    # if using port 80 just add http to url
+    $CFG->wwwroot = 'http://' . $_ENV['URL'];
+} 
+else if ($_ENV['PORT'] == '443') 
 {
+    # if using ssl then enable sslproxy and 
+    # put https on url
     $CFG->sslproxy = true;
+    $CFG->wwwroot = 'https://' . $_ENV['URL'];
+} 
+else
+{
+    # if using nonstandard port put http and port in url
+    # enable reverse proxy as well
+    $CFG->wwwroot = 'http://' . $_ENV['URL'] . ":" . $_ENV['PORT'];
 }
 
 # redis config
 $CFG->session_handler_class = '\core\session\redis';
-$CFG->session_redis_host = 'redis';
+$CFG->session_redis_host = 'localhost';
 $CFG->session_redis_port = 6379;
 $CFG->session_redis_database = 0;
 $CFG->session_redis_acquire_lock_timeout = 120;
@@ -72,7 +74,7 @@ $CFG->pathtopython = '/usr/bin/python3';
 # $CFG->pathtounoconv = ''; # too large
 
 $CFG->cronclionly = false;  
-$CFG->cronremotepassword = 'mBWPMCesiMwWFYu36Fa9zoWDRi8rDwWa3YKdnao6mCozZFUwLiNthVk54Fy7Ssu';  
+$CFG->cronremotepassword = $_ENV['CRON_PASSWORD'];  
 
 # config for blocks
 $CFG->defaultblocks_override = 'uai,navigation,settings';
