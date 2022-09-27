@@ -17,7 +17,7 @@ ADD https://github.com/mlocati/docker-php-extension-installer/releases/latest/do
 RUN true && \
     chmod +x /entrypoint.sh && \
     apt-get update && \
-    apt-get install git ghostscript aspell-en aspell-es locales locales-all graphviz poppler-utils python3 openjdk-17-jre-headless -y && \
+    apt-get install git ghostscript aspell-en aspell-es locales locales-all graphviz poppler-utils python3 openjdk-17-jre-headless libgs-dev -y && \
     chmod +x /usr/local/bin/install-php-extensions && \ 
     MAKEFLAGS="-j$(nproc)" install-php-extensions redis opcache mysqli zip gd intl soap ldap exif xmlrpc imagick
 
