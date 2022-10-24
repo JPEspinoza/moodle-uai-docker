@@ -21,7 +21,7 @@ services:
     # this is the only piece we build
     # it holds the moodle folder and our plugins
     build: .
-    image: webcursos.uai.cl/php:8.0-r5
+    image: webcursos.uai.cl/php:8.0-r6
     restart: always
     network_mode: host
     depends_on:
@@ -30,6 +30,7 @@ services:
     volumes:
       - ./volumes/moodle:/moodle:z,rw # moodle goes here
       - ./volumes/moodledata:/moodledata:z,rw
+      - ./volumes/log:/var/log:Z,rw
       - ./config/config.php:/moodle/config.php:Z,ro
     environment:
       URL: ${URL}

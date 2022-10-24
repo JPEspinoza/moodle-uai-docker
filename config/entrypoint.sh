@@ -25,6 +25,10 @@ opcache.jit_buffer_size=128M
 opcache.jit=1255
 variables_order = EGPCS' >> $PHP_INI_DIR/php.ini
 
+# create paperattendance log if not exist
+mkdir /var/log/moodle
+touch /var/log/moodle/paperattendance.log
+
 echo "Setting up moodle environment..."
 
 if [[ ! -f version.php ]]
@@ -89,4 +93,6 @@ chown $UID:$UID /moodledata -R
 
 # replace bash with php-fpm
 echo "Starting server..."
+
+# we start the server with exec to allow docker to track the entrypoint process
 exec php-fpm --allow-to-run-as-root
