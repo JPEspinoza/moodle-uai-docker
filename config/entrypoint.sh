@@ -14,15 +14,13 @@ echo "Configuring PHP..."
 cp "$PHP_INI_DIR/php.ini-${MODE}" "$PHP_INI_DIR/php.ini"
 
 # add required variables to configuration
+# max_input_vars is required by moodle
+# variables_order is used so that php can read the container environment variables
 echo '
 max_input_vars = 5000
 memory_limit = ${MEMORY_LIMIT}
 post_max_size = ${MAX_UPLOAD_SIZE}
 upload_max_filesize = ${MAX_UPLOAD_SIZE}
-opcache.enable=1
-opcache.enable_cli=1
-opcache.jit_buffer_size=128M
-opcache.jit=1255
 variables_order = EGPCS' >> $PHP_INI_DIR/php.ini
 
 # create paperattendance log if not exist
