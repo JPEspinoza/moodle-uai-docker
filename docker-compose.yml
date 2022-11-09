@@ -1,4 +1,4 @@
-version: '3'
+version: '3.8'
 services:
   mariadb:
     image: docker.io/library/mariadb:10.8
@@ -21,7 +21,7 @@ services:
     # this is the only piece we build
     # it holds the moodle folder and our plugins
     build: .
-    image: webcursos.uai.cl/php:7.4-r1
+    image: webcursos.uai.cl/php:7.4-r2
     restart: always
     network_mode: host
     depends_on:
@@ -40,6 +40,7 @@ services:
       MAX_UPLOAD_SIZE: ${MAX_UPLOAD_SIZE}
       MAX_EXECUTION_TIME: ${MAX_EXECUTION_TIME}
       CRON_PASSWORD: ${CRON_PASSWORD}
+      VERSION: ${VERSION}
       UID: ${UID}
 
   nginx:
