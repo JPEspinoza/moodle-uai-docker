@@ -21,7 +21,7 @@ services:
     # this is the only piece we build
     # it holds the moodle folder and our plugins
     build: .
-    image: webcursos.uai.cl/php:7.4-r2
+    image: webcursos.uai.cl/php:7.4-r3
     restart: always
     network_mode: host
     depends_on:

@@ -72,7 +72,7 @@ chown $UID:$UID /moodledata -R
 # then we change the owner of the file to the uid
 echo "Setting up log folder..."
 mkdir /var/log/moodle
-touch /var/log/moodle/paperattendance.log
+touch /var/log/moodle/processpdf.log
 chown $UID:$UID /var/log/moodle -R
 
 # replace bash with php-fpm
