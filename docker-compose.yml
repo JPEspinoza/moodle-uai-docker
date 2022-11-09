@@ -34,7 +34,6 @@ services:
       - ./config/config.php:/moodle/config.php:Z,ro
     environment:
       URL: ${URL}
-      PORT: ${PORT}
       MODE: ${MODE} 
       MEMORY_LIMIT: ${MEMORY_LIMIT}
       MAX_UPLOAD_SIZE: ${MAX_UPLOAD_SIZE}
@@ -54,10 +53,21 @@ services:
       - ./volumes/moodle:/moodle:z,rw
       - ./volumes/moodledata:/moodledata:z,rw
     environment:
-      URL: ${URL}
-      PORT: ${PORT}
       MAX_UPLOAD_SIZE: ${MAX_UPLOAD_SIZE}
       MAX_EXECUTION_TIME: ${MAX_EXECUTION_TIME}
+  
+  caddy:
+    image: docker.io/library/caddy:2
+    restart: always
+    network_mode: host
+    depends_on:
+      - nginx
+    volumes:
+      - ./config/Caddyfile:/etc/caddy/Caddyfile:Z,ro
+      - ./volumes/caddy_data:/data:Z,rw
+      - ./volumes/caddy_config:/config:Z,rw
+    environment:
+      URL: ${URL}
 
   webcron:
     image: docker.io/cw1900/docker-webcron:latest
@@ -68,4 +78,4 @@ services:
     environment:
       - INTERVAL_TIME=60
       # we can be lenient with the URL here since webcron can handle redirects just fine
-      - URL=http://${URL}:${PORT}/admin/cron.php?password=${CRON_PASSWORD}
+      - URL=http://localhost:9001/admin/cron.php?password=${CRON_PASSWORD}

@@ -18,24 +18,11 @@ $CFG->dboptions = array(
 );
 
 $CFG->dataroot  = '/moodledata';
+$CFG->wwwroot = $_ENV['URL'];
 
-if ($_ENV['PORT'] == '80')
+if (substr($_ENV['URL'], 0, 8) == "https://") 
 {
-    # if using port 80 just add http to url
-    $CFG->wwwroot = 'http://' . $_ENV['URL'];
-} 
-else if ($_ENV['PORT'] == '443') 
-{
-    # if using ssl then enable sslproxy and 
-    # put https on url
     $CFG->sslproxy = true;
-    $CFG->wwwroot = 'https://' . $_ENV['URL'];
-} 
-else
-{
-    # if using nonstandard port put http and port in url
-    # enable reverse proxy as well
-    $CFG->wwwroot = 'http://' . $_ENV['URL'] . ":" . $_ENV['PORT'];
 }
 
 # redis config
