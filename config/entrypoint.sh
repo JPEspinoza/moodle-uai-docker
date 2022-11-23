@@ -16,6 +16,8 @@ max_input_vars = 5000
 memory_limit = ${MEMORY_LIMIT}
 post_max_size = ${MAX_UPLOAD_SIZE}
 upload_max_filesize = ${MAX_UPLOAD_SIZE}
+max_execution_time = ${MAX_EXECUTION_TIME}
+max_input_time = -1
 variables_order = EGPCS' >> $PHP_INI_DIR/php.ini
 
 echo "Setting up moodle environment..."
